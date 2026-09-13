@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AsmCode — online NASM x86 (Windows PE) assembler editor with syntax highlighting, register emulation and .asm download.">
+<title>AsmCode — NASM x86 Editor</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="%23000"/><text x="16" y="22" font-size="14" text-anchor="middle" fill="%23fff" font-family="monospace">%7B%7D</text></svg>'>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- animated background -->
+<div class="bg" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-a"></div>
+  <div class="bg-glow bg-glow-b"></div>
+</div>
+
+<!-- top toolbar -->
+<header class="topbar">
+  <div class="tb tb-left">
+    <button id="themeToggle" class="btn icon-btn" title="Toggle theme" aria-label="Toggle theme"><span class="theme-sym">◐</span></button>
+    <span class="tb-divider" aria-hidden="true"></span>
+    <button id="resetBtn" class="btn" title="Reset emulation">
+      <span class="btn-ic">↺</span><span class="btn-txt">Reset</span>
+    </button>
+  </div>
+
+  <div class="tb tb-center">
+    <div class="logo">
+      <span class="logo-mark">&#123; &#125;</span>
+      <div class="logo-txt">
+        <h1>AsmCode</h1>
+        <p>NASM <span>x86</span> Editor &middot; by <span>ExEintel</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tb tb-right">
+    <button id="stepBtn" class="btn" title="Step one instruction (F9)">
+      <span class="btn-ic">▸</span><span class="btn-txt">Step</span>
+    </button>
+    <button id="runBtn" class="btn run" title="Run program (Ctrl+Enter)">
+      <span class="btn-ic">▶</span><span class="btn-txt">Run</span>
+    </button>
+    <button id="downloadBtn" class="btn primary" title="Download as .asm (Ctrl+S)">
+      <span class="btn-ic">↓</span><span class="btn-txt">Download .asm</span>
+    </button>
+  </div>
+</header>
+
+<!-- main layout -->
+<main class="layout">
+
+  <!-- left: CPU registers -->
+  <aside class="panel regs-panel">
+    <div class="panel-head">
+      <span class="panel-title">CPU Registers</span>
+      <span class="panel-live"><i></i> live</span>
+    </div>
+    <div id="regsGrid" class="regs-grid"></div>
+
+    <div class="panel-head sub">
+      <span class="panel-title">Flags</span>
+    </div>
+    <div id="flagsRow" class="flags-row"></div>
+
+    <div class="panel-head sub">
+      <span class="panel-title">Emulation</span>
+    </div>
+    <div class="vm-stats">
+      <div class="stat"><span>EIP</span><b id="statEip">0x00000000</b></div>
+      <div class="stat"><span>Steps</span><b id="statSteps">0</b></div>
+      <div class="stat"><span>Status</span><b id="statStatus">Ready</b></div>
+    </div>
+
+    <div class="regs-note">
+      <p>Virtual x86 sandbox — grammar-level emulation.</p>
+      <p>WINAPI calls (<b>extern</b>) are detected but <b>not</b> executed.</p>
+    </div>
+  </aside>
+
+  <!-- center: code editor -->
+  <section class="panel editor-panel">
+    <div class="editor-toolbar">
+      <span class="file-tab"><i class="dot"></i> main.asm</span>
+      <span class="editor-hint">NASM &middot; x86 &middot; Windows PE32</span>
+      <span class="editor-pos" id="posInfo">Ln 1, Col 1</span>
+    </div>
+    <div class="editor">
+      <div id="gutter" class="gutter" aria-hidden="true"></div>
+      <div class="editor-wrap">
+        <pre id="highlight" class="highlight" aria-hidden="true"></pre>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- right: console + errors -->
+  <aside class="panel out-panel">
+    <div class="tabs">
+      <button class="tab active" data-tab="console">Console</button>
+      <button class="tab" data-tab="errors">Errors <span id="errCount" class="badge">0</span></button>
+    </div>
+    <div class="tab-bodies">
+      <div class="tab-body active" id="body-console">
+        <pre id="console" class="console"></pre>
+        <div class="stdin-row">
+          <span>stdin:</span>
+          <input id="stdin" type="text" placeholder="input for sys_read (int 0x80 / eax=3)">
+        </div>
+      </div>
+      <div class="tab-body" id="body-errors">
+        <div id="errors" class="errors"></div>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<!-- status bar -->
+<footer class="statusbar">
+  <span id="statusMsg">Ready — write NASM code and press Run</span>
+  <span class="status-right">AsmCode &middot; ExEintel</span>
+</footer>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
